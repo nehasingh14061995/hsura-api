@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { GetcommentParamDto,GetallcommentParamDto } from './comments.dto';
+import { GetcommentParamDto,GetallcommentParamDto,GetallpostcommentParamDto } from './comments.dto';
 import CommentsRepo from './comments.repo';
 
 @Injectable()
@@ -31,4 +31,22 @@ export class CommentsService {
       
         return users;
       }
+      async getpostallCommentdetail(param:GetallpostcommentParamDto): Promise<GetallpostcommentParamDto> {
+        const { postId: postId } = param;
+        const  users =
+          await this.commentssRepo.getpostallcommentdetail(parseInt(postId));
+      
+        return users;
+      }
+      async updatecomment(body:any,id:any): Promise<void> {
+        
+        const user=await this.commentssRepo.updatecomments(body,id);
+        return user; 
+        }
+        async deletecomment(id:any): Promise<void> {
+        
+          const user=await this.commentssRepo.deletecomments(id);
+          return user; 
+          }
+        
 }

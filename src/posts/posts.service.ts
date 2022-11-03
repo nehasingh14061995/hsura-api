@@ -30,4 +30,14 @@ export class PostsService {
       
         return users;
       }
+      async updatepost(body:any,id:any): Promise<void> {
+        
+        const user=await this.PostsRepo.updateposts(body,id);
+        return user; 
+        }
+        async deletepost(id:any): Promise<void> {
+        
+          const user=await this.PostsRepo.deleteposts(id);
+          return user; 
+          }
 }

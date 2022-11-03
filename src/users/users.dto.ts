@@ -22,3 +22,13 @@ export class AddUsersDto {
   
     email: string;
   }
+  export class UpdateusersDto {
+    id:number;
+    userId: number;
+    postId:number;
+    name: string;
+    email: string;
+    body:string;
+
+   
+  }

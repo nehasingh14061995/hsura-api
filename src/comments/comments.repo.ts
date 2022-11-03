@@ -50,6 +50,17 @@ export default class CommentsRepo {
         `;
         return query;
       }
+      updateCommentQuery(): string {
+        const query = gql`
+        mutation ($id: Int!, $updates:comments_set_input!) {
+          update_comments_by_pk(pk_columns: { id: $id }, _set: $updates) {
+          ...comment
+          }
+        }
+          ${commentFragment}
+        `;
+        return query;
+      }
 
       async addcomments(body:any):Promise<any>{
         const commentquery=this.addCommentQuery();
@@ -70,6 +81,37 @@ export default class CommentsRepo {
    
     return newcomments;
    }  
+   async updatecomments(body:any,id:any):Promise<any>{
+   
+    const commentquery= gql`
+    mutation ($id: Int!, $body:comments_set_input!) {
+      update_comments_by_pk(pk_columns: { id: $id }, _set: $body) {
+        userId
+    postId
+    name
+    email
+    body
+      }
+    }
+    `;
+
+type result = [
+    {
+      data: { comment: Comment[] };
+    },
+    
+  ];
+  const newcomments = await this.client.batchRequests<result>([
+    {
+      document: commentquery,
+      variables: {body,id},
+      
+    },
+    
+  ]);
+
+return newcomments;
+}  
 
    async getComments():Promise<any>{
     const commentQuery = this.getCommentQuery();
@@ -156,5 +198,74 @@ async getuserallcommentdetail(userId:number):Promise<any>{
 
     return comments;
 }  
+async getpostallcommentdetail(postId:number):Promise<any>{
+  const query = gql`
+  query getComment($postId: Int) {
+      comments(
+        where: {
+          _and: [{ postId: { _eq: $postId } }]
+        }
+      ) {
+       
+        id
+        postId
+        userId
+        name
+        email
+        body
+      }
+    }
+  
+  `;
+  
+  type result = [
+      {
+      data: { comments: Comment[] };
+      },
+      
+  ];
+  
+  const comments= await this.client.batchRequests<result>([
+      {
+      document: query,
+      variables: {postId},
+      },
+      
+  ]);
+
+  return comments;
+}  
+async deletecomments(id:any):Promise<any>{
+   
+  const commentquery= gql`
+  mutation ($id: Int!) {
+    delete_comments_by_pk(id:$id){
+      userId
+      postId
+      email
+      name
+      body
+    }
+    }
+  `;
+
+type result = [
+  {
+    data: { comment: Comment[] };
+  },
+  
+];
+const newcomments = await this.client.batchRequests<result>([
+  {
+    document: commentquery,
+    variables: {id},
+    
+  },
+  
+]);
+
+return newcomments;
+}  
+
 
 }

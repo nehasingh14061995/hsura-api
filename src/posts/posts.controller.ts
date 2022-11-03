@@ -1,5 +1,5 @@
-import { Controller,Post,Body, Get,Param} from '@nestjs/common';
-import { AddPostsDto ,GetpostParamDto,GetallpostParamDto} from './posts.dto';
+import { Controller,Post,Body, Get,Param, Put, Delete} from '@nestjs/common';
+import { AddPostsDto ,GetpostParamDto,GetallpostParamDto,UpdatePostssDto} from './posts.dto';
 
 import { PostsService } from './posts.service';
 
@@ -24,5 +24,13 @@ async addposts(@Body() body: AddPostsDto): Promise<void> {
   @Get('/users-allpost/:userId')
   async getuserpostdetail(@Param() param:GetallpostParamDto): Promise<GetallpostParamDto>{
     return this.postservice.getuserallPostdetail(param); 
+  }
+  @Put('/update/post/:id')
+  async updateComment(@Param('id') id:string,@Body() body: UpdatePostssDto) {
+    return this.postservice.updatepost(body,parseInt(id));
+  }
+  @Delete('/delete/post/:id')
+  async deleteComment(@Param('id') id:string) {
+    return this.postservice.deletepost(parseInt(id));
   }
 }

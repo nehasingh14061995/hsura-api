@@ -114,5 +114,65 @@ export default class UsersRepo {
     
         return users;
     }  
+    async updateusers(body:any,id:any):Promise<any>{
+   
+      const userquery= gql`
+      mutation ($id: Int!, $body:users_set_input!) {
+        update_users_by_pk(pk_columns: { id: $id }, _set: $body) {
+          name
+          username
+          email
+        }
+      }
+      `;
+    
+    type result = [
+      {
+        data: { users: User[] };
+      },
+      
+    ];
+    const newusers = await this.client.batchRequests<result>([
+      {
+        document: userquery,
+        variables: {body,id},
+        
+      },
+      
+    ]);
+    
+    return newusers;
+    }  
+    
+    async deleteusers(id:any):Promise<any>{
+       
+      const userquery= gql`
+      mutation ($id: Int!) {
+        delete_users_by_pk(id:$id){
+          name
+          username
+          email
+        }
+        }
+      `;
+    
+    type result = [
+      {
+        data: { user: User[] };
+      },
+      
+    ];
+    const newusers = await this.client.batchRequests<result>([
+      {
+        document: userquery,
+        variables: {id},
+        
+      },
+      
+    ]);
+    
+    return newusers;
+    }  
+    
 
     }

@@ -16,6 +16,9 @@ export class Comment {
 export class GetallcommentParamDto{
     userId:string;
 }
+export class GetallpostcommentParamDto{
+  postId:string;
+}
   
   export class AddCommentsDto {
       
@@ -26,5 +29,15 @@ export class GetallcommentParamDto{
       email: string;
       body:string;
      
+     
+    }
+    export class UpdateCommentsDto {
+      id:number;
+      userId: number;
+      postId:number;
+      name: string;
+      email: string;
+      body:string;
+
      
     }

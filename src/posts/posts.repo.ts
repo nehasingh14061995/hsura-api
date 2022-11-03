@@ -150,5 +150,65 @@ async getuserallpostdetail(userId:number):Promise<any>{
 
     return posts;
 }  
+async updateposts(body:any,id:any):Promise<any>{
+   
+  const postquery= gql`
+  mutation ($id: Int!, $body:posts_set_input!) {
+    update_posts_by_pk(pk_columns: { id: $id }, _set: $body) {
+      userId
+      title
+  body
+    }
+  }
+  `;
+
+type result = [
+  {
+    data: { posts: Post[] };
+  },
+  
+];
+const newposts = await this.client.batchRequests<result>([
+  {
+    document: postquery,
+    variables: {body,id},
+    
+  },
+  
+]);
+
+return newposts;
+}  
+
+async deleteposts(id:any):Promise<any>{
+   
+  const postquery= gql`
+  mutation ($id: Int!) {
+    delete_posts_by_pk(id:$id){
+      userId
+     title
+      body
+    }
+    }
+  `;
+
+type result = [
+  {
+    data: { post: Post[] };
+  },
+  
+];
+const newposts = await this.client.batchRequests<result>([
+  {
+    document: postquery,
+    variables: {id},
+    
+  },
+  
+]);
+
+return newposts;
+}  
+
 
 }

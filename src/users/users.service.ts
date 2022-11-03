@@ -25,4 +25,14 @@ export class UsersService {
       
         return users;
       }
+      async updateuser(body:any,id:any): Promise<void> {
+        
+        const user=await this.UsersRepo.updateusers(body,id);
+        return user; 
+        }
+        async deleteuser(id:any): Promise<void> {
+        
+          const user=await this.UsersRepo.deleteusers(id);
+          return user; 
+          }
 }
