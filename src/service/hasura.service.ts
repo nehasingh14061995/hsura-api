@@ -22,7 +22,7 @@ export class HasuraService {
       const token = this.configService.get<string>(
         'HASURA_ADMIN_SECRET',
       ) as string;
-      console.log("token",token)
+     
       this.client.setHeader('x-hasura-admin-secret', `${token}`);
     }
     const data = await this.client.request<T>(query, variables, headers);

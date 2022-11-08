@@ -1,5 +1,5 @@
 import { Controller, Post,Body, Get, Param, Put, Delete } from '@nestjs/common';
-import { AddUsersDto,GetUserParamDto,UpdateusersDto } from './users.dto';
+import { AddUsersDto,GetUserParamDto,UpdateusersDto,LoginDto } from './users.dto';
 import { UsersService } from './users.service';
 
 @Controller('users')
@@ -11,7 +11,10 @@ async addusers(@Body() body: AddUsersDto): Promise<void> {
     return this.userservice.adduser(body);
   }
 
-
+  @Post('/login')
+  async login(@Body() body: LoginDto) {
+  return this.userservice.login(body);
+  }
   @Get('/allusers')
   async getusers(){
     return this.userservice.getUser(); 

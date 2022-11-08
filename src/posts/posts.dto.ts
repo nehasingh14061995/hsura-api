@@ -16,19 +16,16 @@ export class GetallpostParamDto{
 }
 export class AddPostsDto {
     
-    userId: number;
+   
   
     title: string;
   
     body: string;
   }
   export class UpdatePostssDto {
-    id:number;
-    userId: number;
-    postId:number;
-    name: string;
-    email: string;
-    body:string;
+    title: string;
+  
+    body: string;
 
    
   }

@@ -5,22 +5,24 @@ import PostsRepo from './posts.repo';
 export class PostsService {
     constructor(
         private readonly PostsRepo: PostsRepo){}
-    async addpost(body:any): Promise<void> {
-      const user=await this.PostsRepo.addposts(body);
+    async addpost(userId:string,body:any): Promise<void> {
+      const user=await this.PostsRepo.addposts(body,userId);
       return user; 
       }
       
-      async getPost(): Promise<any[]> {
+      async getPost(userId:string): Promise<any[]> {
+       
         const  users =
-          await this.PostsRepo.getPosts();
+          await this.PostsRepo.getPosts(userId);
       
         return users;
       }
-      async getPostdetail(param:GetpostParamDto): Promise<GetpostParamDto> {
+      async getPostdetail(userId:string,param:GetpostParamDto): Promise<GetpostParamDto> {
         const { id: postId } = param;
+       
         const  users =
-          await this.PostsRepo.getpostdetail(parseInt(postId));
-      
+          await this.PostsRepo.getpostdetail(userId,parseInt(postId));
+    
         return users;
       }
       async getuserallPostdetail(param:GetallpostParamDto): Promise<GetallpostParamDto> {
@@ -30,9 +32,9 @@ export class PostsService {
       
         return users;
       }
-      async updatepost(body:any,id:any): Promise<void> {
+      async updatepost(userId:string,body:any,id:any): Promise<void> {
         
-        const user=await this.PostsRepo.updateposts(body,id);
+        const user=await this.PostsRepo.updateposts(userId,body,id);
         return user; 
         }
         async deletepost(id:any): Promise<void> {

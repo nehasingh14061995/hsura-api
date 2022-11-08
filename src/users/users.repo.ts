@@ -1,15 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import { gql } from 'graphql-request';
 import { HasuraService } from '../service/hasura.service';
-import { User } from './users.dto';
+import { User,UpdateusersDto} from './users.dto';
 
-
+export interface OnboardingsByPk {
+  userId: string;
+  id: string;
+  name: string;
+  
+}
 const userFragment = gql`
   fragment user on users {
     id
    name
    username
    email  
+   password
+   role
   }
 `;
 
@@ -39,6 +46,8 @@ export default class UsersRepo {
               name,
               email,
             username,
+            password,
+            role
                
             }
         }
@@ -122,6 +131,8 @@ export default class UsersRepo {
           name
           username
           email
+          password
+          role
         }
       }
       `;
@@ -152,6 +163,7 @@ export default class UsersRepo {
           name
           username
           email
+          password
         }
         }
       `;
@@ -174,5 +186,61 @@ export default class UsersRepo {
     return newusers;
     }  
     
+    async getUser(email: string, role: string) {
+      const query = gql`
+        query getUser($email: String, $role: String) {
+          users(
+            where: {
+              _and: [{ email: { _eq: $email } }, { role: { _eq: $role } }]
+            }
+          ) {
+            ...user
+            id
+          }
+        }
+        ${userFragment}
+      `;
+      const users = await this.getUsers(query, { email, role });
+      return users;
+    }
+    private async getUsers(query: string, variables = {}) {
+      const { users } = await this.client.request<{ users: User[] }>(
+        query,
+        variables,
+      );
+      return users;
+    }
 
+    async updateUserById(id: string, refresh_token: string) {
+      const updates= {
+        refresh_token: refresh_token
+      }
+      const mutation = gql`
+        mutation updateUsersById($id: Int!, $updates: users_set_input) {
+          update_users_by_pk(pk_columns: { id: $id }, _set: $updates) {
+            id
+            refresh_token
+          }
+        }
+        ${userFragment}
+      `;
+      return this.client.request<{ update_users_by_pk: User[] }>(mutation, {
+        id,
+        updates,
+      });
+    }
+    async getOnboardingByUserId(userId: string) {
+      const query = gql`
+        query ($userId: Int!) {
+          onboardings_by_pk(userId: $userId) {
+            screen
+            is_completed
+          }
+        }
+      `;
+      const { onboardings_by_pk } = await this.client.request<{
+        onboardings_by_pk: OnboardingsByPk;
+      }>(query, { userId });
+      return onboardings_by_pk;
+    }
     }

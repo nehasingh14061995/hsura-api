@@ -19,13 +19,18 @@ export default class PostsRepo {
  constructor(private readonly client:HasuraService){}
     getPostQuery(): string {
         const query = gql`
-        query{
-            posts{
-              ...post
-               
+        query($userId: Int!){
+            users(where: {id: {_eq: $userId}}) {
+              posts{
+
+                id 
+                userId
+                title
+                body
+              }
             }
         }
-          ${postFragment}
+         
         `;
         return query;
       }
@@ -33,11 +38,11 @@ export default class PostsRepo {
 
       addPostQuery(): string {
         const query = gql`
-        mutation($body: posts_insert_input!){
-         insert_posts_one(object: $body)
+        mutation($input: posts_insert_input!){
+         insert_posts_one(object: $input)
                { 
-              userId,
-              title,
+             userId,
+            title,
             body,
                
             }
@@ -47,7 +52,7 @@ export default class PostsRepo {
         return query;
       }
 
-      async addposts(body:any):Promise<any>{
+      async addposts(body:any,userId:string,):Promise<any>{
         const postsquery=this.addPostQuery();
     
     type result = [
@@ -56,10 +61,11 @@ export default class PostsRepo {
         },
         
       ];
+      const input ={userId, ...body}
       const newposts = await this.client.batchRequests<result>([
         {
           document: postsquery,
-          variables: {body},
+          variables: {input},
         },
         
       ]);
@@ -67,7 +73,7 @@ export default class PostsRepo {
     return newposts;
    }  
 
-   async getPosts():Promise<any>{
+   async getPosts(userId:string):Promise<any>{
     const postQuery = this.getPostQuery();
     
     type result = [
@@ -80,20 +86,22 @@ export default class PostsRepo {
       const posts= await this.client.batchRequests<result>([
         {
           document: postQuery,
-          variables: {},
+          variables: {userId},
         },
         
       ]);
    
     return posts;
    }  
-   async getpostdetail(postId:number):Promise<any>{
+   async getpostdetail(userId:string,postId:number):Promise<any>{
     const query = gql`
-    query getPostsById($postId: Int!) {
-        posts_by_pk(id: $postId) {
-       ...post
-        }
-      }
+    query getPostsById($userId:Int!,$postId: Int!) {
+      users(where:{id:{_eq:$userId}}){
+           posts(where:{id:{_eq: $postId}}) {
+        ...post
+           }
+         }
+     }
       ${postFragment}
     `;
     
@@ -107,7 +115,7 @@ export default class PostsRepo {
     const posts= await this.client.batchRequests<result>([
         {
         document: query,
-        variables: {postId},
+        variables: {userId,postId},
         },
         
     ]);
@@ -150,11 +158,11 @@ async getuserallpostdetail(userId:number):Promise<any>{
 
     return posts;
 }  
-async updateposts(body:any,id:any):Promise<any>{
+async updateposts(userId:string,body:any,id:any):Promise<any>{
    
   const postquery= gql`
-  mutation ($id: Int!, $body:posts_set_input!) {
-    update_posts_by_pk(pk_columns: { id: $id }, _set: $body) {
+  mutation ($id: Int!, $input:posts_set_input!) {
+    update_posts_by_pk(pk_columns: { id: $id }, _set: $input) {
       userId
       title
   body
@@ -168,10 +176,11 @@ type result = [
   },
   
 ];
+const input={userId,...body}
 const newposts = await this.client.batchRequests<result>([
   {
     document: postquery,
-    variables: {body,id},
+    variables: {input,id},
     
   },
   
