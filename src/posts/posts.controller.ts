@@ -1,7 +1,5 @@
 import { Controller,Post,Body, Get,Param, Put, Delete, UseGuards} from '@nestjs/common';
 import { AddPostsDto ,GetpostParamDto,GetallpostParamDto,UpdatePostssDto} from './posts.dto';
-//import { AuthGuard } from '@nestjs/passport';
-//import { LoggedInUser,GetUser } from '../service/jwt.strategy';
 import { PostsService } from './posts.service';
 import { User, UserRoles } from '../users/users.dto';
 

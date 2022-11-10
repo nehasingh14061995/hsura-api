@@ -17,15 +17,23 @@ import { RolesGuard } from './shared/guards/role.guard';
 import{
   AuthModule
 } from './shared/auth/auth.module';
+import { ProductsModule } from './products/products.module';
+import { ProductsController } from './products/products.controller';
+import { ProductsService } from './products/products.service';
+import { CartModule } from './cart/cart.module';
+import { CartController } from './cart/cart.controller';
+import { CartService } from './cart/cart.service';
 
 @Module({
   imports: [UsersModule,
   ConfigModule.forRoot({isGlobal:true}),
   PostsModule,
+  ProductsModule,
   AuthModule,
+  CartModule,
   CommentsModule],
-  controllers: [AppController, UsersController, PostsController, CommentsController],
-  providers: [AppService, UsersService,ConfigService, PostsService, CommentsService,{
+  controllers: [AppController, UsersController, PostsController, CommentsController,ProductsController,CartController],
+  providers: [AppService, UsersService,ConfigService, PostsService, CommentsService,ProductsService,CartService,{
     provide: APP_GUARD,
     useClass: RolesGuard,
   }, ],
